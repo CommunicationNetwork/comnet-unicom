@@ -19,3 +19,15 @@ void app_main() {
     }
 }
 ```
+
+Example receiving:
+```python
+from unicom_receiver import UnicomReceiver
+
+def recv(data):
+    print("Received packet!");
+    print(data)
+
+receiver = UnicomReceiver("interface", "test-receiver", recv)
+receiver.start()
+```
