@@ -11,7 +11,7 @@ void app_main() {
     buffer[1] = 0xBB;
     buffer[2] = 0xCC;
     
-    esp_err_t code = transmit("test-receiver");
+    esp_err_t code = transmit("test-receiver", 3);
     if(code == ESP_OK) {
         ESP_LOGI("transmitter", "sent!");
     } else {

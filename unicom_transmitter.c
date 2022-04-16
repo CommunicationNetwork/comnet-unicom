@@ -46,7 +46,10 @@ uint8_t* init_transmitter(char *id, uint8_t channel, freedom_outside_cb_t packet
         packet->header.transmitter[i] = packet->header.transmitter[i+3] = ((hash >> (24-i*8)) & 0xFF);
     }
 
-    return (uint8_t*)&packet->payload;
+    uint8_t* payload_address = (uint8_t*)(&packet->payload);
+    payload_address += 2;
+
+    return payload_address;
 }
 
 /**
@@ -55,14 +58,18 @@ uint8_t* init_transmitter(char *id, uint8_t channel, freedom_outside_cb_t packet
   * @param      receiver            name of the receiver
   *
   */
-esp_err_t transmit(char *receiver) {
+esp_err_t transmit(char *receiver, unsigned short size) {
+    //Set content size (Swap bytes because of endianness: little -> big)
+    packet->payload[0] = ((uint8_t*)&size)[1];
+    packet->payload[1] = ((uint8_t*)&size)[0];
     //Set the receiver id
     unsigned long hash = generate_hash(receiver);
     for(int i = 0; i < 3; i++) {
         packet->header.receiver[i] = packet->header.receiver[i+3] = ((hash >> (24 - i*8)) & 0xFF);
     }
+
     // Send the packet
-    return esp_wifi_80211_tx(WIFI_IF_STA, packet, sizeof(*packet), false);
+    return esp_wifi_80211_tx(WIFI_IF_STA, packet, sizeof(packet->header) + size + 2, false);
 }
 
 /*
