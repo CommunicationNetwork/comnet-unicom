@@ -54,7 +54,9 @@ The constructor of the UnicomReceiver looks like this:
 
 To start the receiver, use `.start()`
 
-(The interface must be in monitor mode)
+Notice:
+- The interface must be in monitor mode
+- The received data starts with the length of the data (unsigned short, big endian)
 
 Example receiving:
 ```python
